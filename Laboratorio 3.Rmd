@@ -1,0 +1,37 @@
+---
+title: "Laboratorio 3"
+output: html_document
+date: '2022-08-22'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+
+#traemos el dataset
+
+db<-read.csv('train.csv')
+summary(db)
+
+```
+
+Para empezar, podemos ver que el contenido del dataset es completamente diferente a los que hemos trabajado anteriormente, como podemos ver todas las columnas siguien una misma estructura de pixeles, asi como que tambien cuentan con valores numericos, los cuales representan un valor dentro de los pixeles. 
+
+## ANALISIS EXPLORATORIO: 
+
+Para poder tener una idea mas clara de lo que tenemos en el dataset, haremos una representacion visual de los datos para comprenderlos mejor. 
+
+```{r}
+table(db$label)
+
+
+ggplot(data = db) + geom_histogram(aes(x=label,fill=factor(label)),bins=10, position = "stack",alpha = 0.5)+theme(legend.position="none")+ scale_x_continuous(breaks = seq(0, 100, 1.))
+
+
+```
