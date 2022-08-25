@@ -185,6 +185,108 @@ ggplot(df_serie,aes(x = date, y = pass, colour = class)) +
 #               MODELO 2
 # ///////////////////////////////////////
 
+unit_lstm1 <- 64
+dropout_lstm1 <- 0.01
+recurrent_dropout_lstm1 <- 0.01
+
+unit_lstm2 <- 32
+dropout_lstm2 <- 0.01
+recurrent_dropout_lstm2 <- 0.01
+
+timesteps=1
+
+modelo2 <- keras_model_sequential()
+
+modelo2 %>%
+  
+  # lstm1
+  layer_lstm(
+    name = "lstm1",
+    units = unit_lstm1,
+    input_shape = c(timesteps, 1),
+    dropout = dropout_lstm1,
+    recurrent_dropout = recurrent_dropout_lstm1,
+    return_sequences = TRUE
+  ) %>%
+  
+  # lstm2
+  layer_lstm(
+    name = "lstm2",
+    units = unit_lstm2,
+    dropout = dropout_lstm2,
+    recurrent_dropout = recurrent_dropout_lstm2,
+    return_sequences = FALSE
+  ) %>%
+  
+  layer_dense(
+    name = "output",
+    units = 1
+  )
 
 
+modelo2 %>%
+  compile(
+    optimizer = "rmsprop",
+    loss = "mse"
+  )
+
+
+summary(modelo2)
+
+
+# Se entrena el segundo modelo 
+epocas <- 50
+history <- modelo2 %>% fit(
+  x = x_train,
+  y = y_train,
+  validation_data = list(x_val, y_val),
+  batch_size = lote,
+  epochs = epocas,
+  shuffle = FALSE,
+  verbose = 0
+)
+
+
+#Se evalua el nuevo modelo 
+print("Entrenamiento")
+modelo2 %>% evaluate(
+  x = x_train,
+  y = y_train
+)
+
+print("Validaciion")
+modelo2 %>% evaluate(
+  x = x_val,
+  y = y_val
+)
+
+print("Pueba")
+modelo2 %>% evaluate(
+  x = x_test,
+  y = y_test
+)
+
+
+# Se hace la prediccion 
+prediccion_val_2 <- prediccion_fun(x_val,modelo2,1,attr(norm_s1,"scaled:scale"),
+                                   attr(norm_s1,"scaled:center"),dif=T,s1,entrenamiento              
+)
+prediccion_test_2 <- prediccion_fun(x_test,modelo2,1,attr(norm_s1,"scaled:scale"),
+                                    attr(norm_s1,"scaled:center"),dif=T,s1,entrenamiento+val_test               
+)
+
+
+#Grafica
+df_serie_val_2<-data.frame(pass=prediccion_val_2, date=zoo::as.Date(time(serie_val)))
+df_serie_test_2<-data.frame(pass=prediccion_test_2, date=zoo::as.Date(time(serie_test)))
+
+
+df_serie_total$class <- 'real'
+df_serie_val_2$class <- 'validacion'
+df_serie_test_2$class <- 'prueba'
+
+df_serie_2<-rbind(df_serie_total, df_serie_val_2,df_serie_test_2)
+df_serie$class<-factor(df_serie_2$class,levels = c('real','validacion','prueba'))
+ggplot(df_serie,aes(x = date, y = pass, colour = class)) +
+  geom_line()
 
