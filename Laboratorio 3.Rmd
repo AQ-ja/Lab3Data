@@ -429,6 +429,8 @@ Lo que podemos ver, ahora que ambos modelos estan completos y de manera grafica,
 ## LSTM VS ARIMA 
 
 
+[Modelo Arima](https://ibb.co/8dX885n)
+
 
 Realmente, viendo ambas graficas, por lo que se puede ver es que si bien ambos son muy buenos que hacer las predicciones, pero sin embargo, el LSTM crea una prediccion mucho mas completa, como que se logra crear una prediccion mas acerptada pero porque abarca mucho mas que lo que puede ser el ARIMA, pero esto no todo es bueno, ya que por el mismo hecho que el LSTM crea un modelo y una prediccion mucho mas completa que lo hace ARIMA, eso mismo hace que sea un proceso mucho mas denso y extenso, mientras que el ARIMA es mucho mas facil de implementar y cuanta con una ejecucion mucho mas rapida, no cuenta con el mayor rango de dificultad. En conclusion, ambos son metodos muy exactos y precisos, pero dependiendo de lo que se quiera usar y para que se desee implementar, quizas el LSTM es uno de mayor fidelidad. 
 
