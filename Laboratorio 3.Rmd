@@ -30,8 +30,44 @@ Para poder tener una idea mas clara de lo que tenemos en el dataset, haremos una
 ```{r}
 table(db$label)
 
-
+str(db, list.len=ncol(datos))
+summary(db)
+dim(db)
+db$label[1:20]
 ggplot(data = db) + geom_histogram(aes(x=label,fill=factor(label)),bins=10, position = "stack",alpha = 0.5)+theme(legend.position="none")+ scale_x_continuous(breaks = seq(0, 100, 1.))
 
 
 ```
+
+```{r echo=FALSE}
+porcentaje<-0.8
+set.seed(123)
+corte <- sample(nrow(db),nrow(datos)*porcentaje)
+train<-db[corte,]
+train <- cbind(train[,1],train[,-1]/255.0)
+test<-db[-corte,]
+```
+
+Dividimos el train y test del conjunto de datos y mostramos el head de train. 
+
+
+```{r echo=FALSE}
+head(train[1:10])
+```
+```{r echo=FALSE}
+m = matrix(unlist(train[10,-1]),nrow = 28,byrow = T)
+image(m,col=grey.colors(255))
+```
+```{r echo=FALSE}
+rotate <- function(x) t(apply(x, 2, rev)) #rota la imagen
+par(mfrow=c(2,3))
+lapply(1:6, 
+    function(x) image(
+                    rotate(matrix(unlist(train[x,-1]),nrow = 28,byrow = T)),
+                    col=grey.colors(255),
+                    xlab=train[x,1]
+                )
+)
+par(mfrow=c(1,1)) # set plot options back to default
+```
+
