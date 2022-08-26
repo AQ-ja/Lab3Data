@@ -428,7 +428,101 @@ Lo que podemos ver, ahora que ambos modelos estan completos y de manera grafica,
 
 ## LSTM VS ARIMA 
 
+```{r include=FALSE}
+# Para el combustible Superior 
+diesel_ts <- ts( diesel$`Diesel`, start = c(2001,1),frequency = 12)
 
+# Inicio de la serie
+start(diesel_ts)
+#Final de la serie
+end(diesel_ts)
+#Frecuencia de la serie 
+frequency(diesel_ts)
+
+#Resultado en forma de grafica. 
+plot(diesel_ts)
+abline(reg=lm(diesel_ts~time(diesel_ts)), col=c("blue"))
+
+```
+
+
+Con esto, podemos ver el compartamiento que ha tenido el combustible diesel a lo largo de los años. 
+
+
+```{r}
+plot(aggregate(diesel_ts,FUN=mean))
+dec.Diesel<-decompose(diesel_ts)
+plot(dec.Diesel)
+```
+
+
+Como se observa en la grafica anterior, la serie tiene tendencia a aumentar asi como que tambien tiene estacionalidad y por ultimo, se puede ver que no es estacionaria en varianza, por eso debemos aplicarle una transformacion logaritmica. 
+
+
+```{r}
+train <- head(diesel_ts, round(length(diesel_ts) * 0.7))
+h <- length(diesel_ts) - length(train)
+test <- tail(diesel_ts, h)
+
+Diesellog <- log(train)
+plot(decompose(train))
+
+
+
+
+plot(train)
+
+
+
+
+
+
+adfTest(train)
+unitrootTest(train)
+
+
+
+
+
+
+adfTest(diff(train))
+unitrootTest(diff(train))
+
+
+acf(Diesellog, 50)
+
+
+
+pacf(Diesellog, 50)
+
+
+traines <- decompose(train)
+plot(traines$seasonal)
+
+
+
+Acf(diff(Diesellog),36)
+Pacf(diff(Diesellog),36)
+
+
+
+
+
+fitArima<-arima(Diesellog, order = c(1,2,2), seasonal =c(1,1,0))
+fautoarima<-auto.arima(train)
+fautoarima
+
+
+library(lmtest)
+coeftest(fitArima)
+
+
+
+
+
+coeftest(fautoarima)
+
+```
 
 Realmente, viendo ambas graficas, por lo que se puede ver es que si bien ambos son muy buenos que hacer las predicciones, pero sin embargo, el LSTM crea una prediccion mucho mas completa, como que se logra crear una prediccion mas acerptada pero porque abarca mucho mas que lo que puede ser el ARIMA, pero esto no todo es bueno, ya que por el mismo hecho que el LSTM crea un modelo y una prediccion mucho mas completa que lo hace ARIMA, eso mismo hace que sea un proceso mucho mas denso y extenso, mientras que el ARIMA es mucho mas facil de implementar y cuanta con una ejecucion mucho mas rapida, no cuenta con el mayor rango de dificultad. En conclusion, ambos son metodos muy exactos y precisos, pero dependiendo de lo que se quiera usar y para que se desee implementar, quizas el LSTM es uno de mayor fidelidad. 
 
